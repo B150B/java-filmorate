@@ -46,7 +46,7 @@ class UserControllerTest {
     }
 
     @Test
-    void mustBeErrorWhenAddingUserWithoutATinEmail() {
+    void mustBeErrorWhenAddingUserWithoutAtInEmail() {
         User user3 = new User("user3gmail.com", "user3", "Мистер три", LocalDate.of(2001, 11, 11));
         assertThrows(ValidationException.class, () -> {
             userController.createUser(user3);
@@ -107,7 +107,7 @@ class UserControllerTest {
     }
 
     @Test
-    void MustBeErrorWhenUpdateUserWithoutID() {
+    void mustBeErrorWhenUpdateUserWithoutID() {
         User user3 = new User("user3@gmail.com", "user3", "Мистер три", LocalDate.of(2001, 11, 11));
         userController.createUser(user3);
         user3.setId(22L);
