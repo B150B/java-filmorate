@@ -97,7 +97,7 @@ public class FilmControllerTest {
     }
 
     @Test
-    void MustBeErrorWhenUpdateFilmWithoutID() {
+    void mustBeErrorWhenUpdateFilmWithoutID() {
         film3 = new Film("Фильм3", "Описание фильма3", LocalDate.of(2000, 1, 22), Duration.ofMinutes(88));
         filmController.createFilm(film3);
         film3.setId(22L);
