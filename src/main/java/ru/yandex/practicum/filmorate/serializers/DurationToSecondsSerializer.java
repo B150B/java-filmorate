@@ -9,7 +9,7 @@ import java.time.Duration;
 
 public class DurationToSecondsSerializer extends JsonSerializer<Duration> {
     @Override
-    public void serialize (Duration duration, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
+    public void serialize(Duration duration, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
         if (duration != null) {
             jsonGenerator.writeNumber(duration.getSeconds());
         } else {

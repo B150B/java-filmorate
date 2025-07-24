@@ -9,7 +9,7 @@ import java.time.Duration;
 
 public class SecondsToDurationDeserializer extends JsonDeserializer<Duration> {
     @Override
-    public Duration deserialize (JsonParser parser, DeserializationContext context) throws IOException {
+    public Duration deserialize(JsonParser parser, DeserializationContext context) throws IOException {
         Long seconds = parser.getLongValue();
         return Duration.ofSeconds(seconds);
     }
