@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
@@ -33,7 +34,7 @@ public class UserController {
     }
 
     @PostMapping
-    public User createUser(@RequestBody User user) {
+    public User createUser(@Valid @RequestBody User user) {
         if ((user.getEmail().isBlank()) || !(user.getEmail().contains("@"))) {
             log.warn("Ошибка валидации - Электронная почта не может быть пустой и должна содержать символ \"@\"");
             throw new ValidationException("Электронная почта не может быть пустой и должна содержать символ \"@\" ");
@@ -58,7 +59,7 @@ public class UserController {
     }
 
     @PutMapping
-    public User updateUser(@RequestBody User newUser) {
+    public User updateUser(@Valid @RequestBody User newUser) {
         if (newUser.getId() == null) {
             log.warn("Валидация не пройдена - не указан ID в методе PUT");
             throw new ValidationException("Должен быть указан id");
@@ -90,7 +91,7 @@ public class UserController {
         }
         if (newUser.getEmail() != null) {
             log.info("Обновлен email пользователя:" + newUser.getEmail());
-            oldUser.setEmail(newUser.getName());
+            oldUser.setEmail(newUser.getEmail());
         }
         if (newUser.getLogin() != null) {
             log.info("Обновлен логин пользователя:" + newUser.getLogin());
