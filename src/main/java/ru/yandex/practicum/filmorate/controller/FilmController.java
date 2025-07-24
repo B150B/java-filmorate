@@ -73,7 +73,7 @@ public class FilmController {
             log.warn("Валидация не пройдена - пустое название");
             throw new ValidationException("Название не может быть пустым");
         }
-        if ( newFilm.getDescription().length() > 200) {
+        if (newFilm.getDescription().length() > 200) {
             log.warn("Валидация не пройдена - превышена максимальная длина описания");
             throw new ValidationException("Максимальная длина описания (200 символов) превышена");
         }
