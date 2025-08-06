@@ -2,81 +2,64 @@ package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
 
-import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
 
 @Slf4j
 @RestController
 @RequestMapping("/users")
 public class UserController {
-    private final Map<Long, User> userMap = new HashMap<>();
 
-    private long getNextId() {
-        long currentMaxId = userMap.keySet()
-                .stream()
-                .mapToLong(id -> id)
-                .max()
-                .orElse(0);
-        return ++currentMaxId;
+    UserService userService;
+
+    @Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
+
 
     @GetMapping
     public List<User> getAllUsers() {
-        log.info("Запрошен список пользователей");
-        return userMap.values().stream().toList();
+        return userService.getAllUsers();
+    }
+
+    @GetMapping("/{userId}/friends")
+    public List<User> getFriendList(@PathVariable Long userId) {
+        return userService.getFriendList(userId);
+    }
+
+    @GetMapping("/{userId}/friends/common/{friendId}")
+    public List<User> getCommonFriends(@PathVariable Long userId,
+                                       @PathVariable Long friendId) {
+        return userService.getCommonFriends(userId, friendId);
     }
 
     @PostMapping
     public User createUser(@Valid @RequestBody User user) {
-
-        if (user.getBirthday().isAfter(LocalDate.now())) {
-            log.warn("Ошибка валидации - Дата рождения не может быть в будущем");
-            throw new ValidationException("Дата рождения не может быть в будущем");
-        }
-        user.setId(getNextId());
-        userMap.put(user.getId(), user);
-        log.info("Создан новый пользователь: " + user.toString());
-        return user;
+        return userService.createUser(user);
     }
 
     @PutMapping
     public User updateUser(@Valid @RequestBody User newUser) {
-        if (newUser.getId() == null) {
-            log.warn("Валидация не пройдена - не указан ID в методе PUT");
-            throw new ValidationException("Должен быть указан id");
-        }
-        User oldUser;
-        if (!userMap.containsKey(newUser.getId())) {
-            log.warn("Не найден пользователь с указанным id при методе PUT");
-            throw new NotFoundException("Не найден пользователь с указанным id");
-        } else {
-            oldUser = userMap.get(newUser.getId());
-        }
-
-        if (newUser.getBirthday().isAfter(LocalDate.now())) {
-            log.warn("Ошибка валидации - Дата рождения не может быть в будущем");
-            throw new ValidationException("Дата рождения не может быть в будущем");
-        }
-
-        log.info("Обновлено отображаемое имя пользователя:" + newUser.getName());
-        oldUser.setName(newUser.getName());
-        log.info("Обновлен email пользователя:" + newUser.getEmail());
-        oldUser.setEmail(newUser.getEmail());
-        log.info("Обновлен логин пользователя:" + newUser.getLogin());
-        oldUser.setLogin(newUser.getLogin());
-        log.info("Обновлена дата рождения пользователя:" + newUser.getBirthday());
-        oldUser.setBirthday(newUser.getBirthday());
-
-        log.info("Обновлен пользователь: " + oldUser.toString());
-        return oldUser;
-
+        return userService.updateUser(newUser);
     }
+
+    @PutMapping("/{userId}/friends/{friendId}")
+    public String addFriend(@PathVariable Long userId,
+                            @PathVariable Long friendId) {
+        return userService.addFriend(userId, friendId);
+    }
+
+    @DeleteMapping("/{userId}/friends/{friendId}")
+    public String removFriend(@PathVariable Long userId,
+                              @PathVariable Long friendId) {
+        return userService.removeFriend(userId, friendId);
+    }
+
 
 }
