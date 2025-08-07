@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -30,5 +31,6 @@ public class User {
             this.name = name;
         }
         this.birthday = birthday;
+        this.friends = new HashSet<>();
     }
 }
