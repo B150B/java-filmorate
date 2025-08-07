@@ -40,20 +40,18 @@ public class UserService {
     }
 
 
-    public String addFriend(Long userId, Long friendId) {
+    public void addFriend(Long userId, Long friendId) {
         User user = userStorage.getUser(userId);
         User friend = userStorage.getUser(friendId);
         user.getFriends().add(friendId);
         friend.getFriends().add(userId);
-        return String.format("Пользователь %s добавил в друзья пользователя %s", user.getName(), friend.getName());
     }
 
-    public String removeFriend(Long userId, Long friendId) {
+    public void removeFriend(Long userId, Long friendId) {
         User user = userStorage.getUser(userId);
         User friend = userStorage.getUser(friendId);
         user.getFriends().remove(friendId);
         friend.getFriends().remove(userId);
-        return String.format("Пользователь %s удалил из друзей пользователя %s", user.getName(), friend.getName());
     }
 
     public List<User> getFriendList(Long userId) {

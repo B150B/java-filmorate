@@ -37,24 +37,20 @@ public class FilmService {
         return filmStorage.updateFilm(newFilm);
     }
 
-    public String setLike(Long userid, Long filmId) {
+    public void setLike(Long userid, Long filmId) {
         Film film = filmStorage.getFilm(filmId);
         film.getLikedUserIds().add(userid);
-        String result = String.format("Пользователь %s поставил лайк фильму %s",
+        log.info(String.format("Пользователь %s поставил лайк фильму %s",
                 userService.getUser(userid),
-                filmStorage.getFilm(filmId));
-        log.info(result);
-        return result;
+                filmStorage.getFilm(filmId)));
     }
 
-    public String removeLike(Long userid, Long filmId) {
+    public void removeLike(Long userid, Long filmId) {
         Film film = filmStorage.getFilm(filmId);
         film.getLikedUserIds().remove(userid);
-        String result = String.format("Пользователь %s удалил лайк фильму %s",
+        log.info(String.format("Пользователь %s удалил лайк фильму %s",
                 userService.getUser(userid),
-                filmStorage.getFilm(filmId));
-        log.info(result);
-        return result;
+                filmStorage.getFilm(filmId)));
     }
 
     public List<Film> getListOfPopularFilms(Integer limit) {
