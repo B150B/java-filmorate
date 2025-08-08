@@ -1,9 +1,10 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
 import java.util.List;
@@ -11,15 +12,10 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class FilmService {
-    FilmStorage filmStorage;
-    UserService userService;
-
-    @Autowired
-    public FilmService(FilmStorage filmStorage, UserService userService) {
-        this.filmStorage = filmStorage;
-        this.userService = userService;
-    }
+    private final FilmStorage filmStorage;
+    private final UserService userService;
 
     public List<Film> getAllFilms() {
         return filmStorage.getAllFilms();
@@ -38,19 +34,21 @@ public class FilmService {
     }
 
     public void setLike(Long userid, Long filmId) {
+        User user = userService.getUser(userid); // при таком получении пользователя проверяется его наличие в базе
         Film film = filmStorage.getFilm(filmId);
         film.getLikedUserIds().add(userid);
         log.info(String.format("Пользователь %s поставил лайк фильму %s",
-                userService.getUser(userid),
-                filmStorage.getFilm(filmId)));
+                user,
+                film));
     }
 
     public void removeLike(Long userid, Long filmId) {
+        User user = userService.getUser(userid); // при таком получении пользователя проверяется его наличие в базе
         Film film = filmStorage.getFilm(filmId);
         film.getLikedUserIds().remove(userid);
         log.info(String.format("Пользователь %s удалил лайк фильму %s",
-                userService.getUser(userid),
-                filmStorage.getFilm(filmId)));
+                user,
+                film));
     }
 
     public List<Film> getListOfPopularFilms(Integer limit) {
