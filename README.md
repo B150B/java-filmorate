@@ -1,4 +1,4 @@
-![Схема БД] (images/Filmorate_scheme.png)
+![Схема БД](images/Filmorate_scheme.png)
 
 Примеры запросов:
 
