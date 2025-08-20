@@ -25,6 +25,8 @@ public class Film {
     @Positive
     private Integer duration;
     private Set<Long> likedUserIds;
+    private Set<Genre> genres;
+    private MpaRating mpaRating;
 
     public Film(String name, String description, LocalDate releaseDate, Integer duration) {
         this.name = name;
