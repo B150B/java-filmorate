@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class FriendShip {
+public class Friendship {
     private Long userId;
     private Long friendId;
     private boolean friendshipConfirmed;

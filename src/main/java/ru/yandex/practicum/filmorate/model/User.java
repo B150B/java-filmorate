@@ -19,7 +19,7 @@ public class User {
     private String login;
     private String name;
     private LocalDate birthday;
-    private Set<FriendShip> friendships;
+    private Set<Friendship> friendships;
 
     public User(String email, String login, String name, LocalDate birthday) {
         this.email = email;
