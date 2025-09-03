@@ -17,7 +17,7 @@ public class FilmLikeDbStorage implements FilmLikeStorage {
 
     @Override
     public Set<Long> getLikesById(Long id) {
-        log.info("Запрошен список лайков фильма с id = " + id );
+        log.info("Запрошен список лайков фильма с id = " + id);
         return new HashSet<>(jdbcTemplate.queryForList(
                 "SELECT user_id FROM film_likes WHERE film_id = ?",
                 Long.class,
