@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.model.Friendship;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
@@ -15,6 +16,7 @@ import java.util.Map;
 @Component
 public class InMemoryUserStorage implements UserStorage {
     private final Map<Long, User> userMap = new HashMap<>();
+    private final Map<Long, Friendship> friendshipMap = new HashMap<>();
 
     private long getNextId() {
         long currentMaxId = userMap.keySet()
@@ -82,6 +84,10 @@ public class InMemoryUserStorage implements UserStorage {
         log.info("Обновлен пользователь: " + oldUser.toString());
         return oldUser;
 
+    }
+
+    public boolean containsUser(Long id) {
+        return userMap.containsKey(id);
     }
 
 
