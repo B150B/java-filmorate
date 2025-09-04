@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.storage.Friendship;
+package ru.yandex.practicum.filmorate.storage.friendship;
 
 import ru.yandex.practicum.filmorate.model.Friendship;
 

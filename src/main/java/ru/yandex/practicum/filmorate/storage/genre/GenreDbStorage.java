@@ -29,7 +29,7 @@ public class GenreDbStorage implements GenreStorage {
 
     @Override
     public Genre getGenre(Long id) {
-        log.info("Запрошен жанр с id=" + id);
+        log.info("Запрошен жанр с id={}", id);
         String sqlQuery = "SELECT id, name FROM genres WHERE id = ?";
         try {
             return jdbcTemplate.queryForObject(sqlQuery, new GenreMapper(), id);

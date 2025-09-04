@@ -46,9 +46,9 @@ public class FilmService {
         Film film = filmStorage.getFilm(filmId);
         film.getLikedUserIds().add(userid);
         filmLikeStorage.addLike(filmId, userid);
-        log.info(String.format("Пользователь %s поставил лайк фильму %s",
+        log.info("Пользователь {} поставил лайк фильму {}",
                 user,
-                film));
+                film);
     }
 
     public void removeLike(Long userid, Long filmId) {
@@ -56,13 +56,13 @@ public class FilmService {
         Film film = filmStorage.getFilm(filmId);
         film.getLikedUserIds().remove(userid);
         filmLikeStorage.removeLike(filmId, userid);
-        log.info(String.format("Пользователь %s удалил лайк фильму %s",
+        log.info("Пользователь {} удалил лайк фильму {}",
                 user,
-                film));
+                film);
     }
 
     public List<Film> getListOfPopularFilms(Integer limit) {
-        log.info("Запрошен список " + limit + " самых популярных фильмов");
+        log.info("Запрошен список {} самых популярных фильмов", limit);
         return filmStorage.getAllFilms().stream()
                 .sorted((film1, film2) -> Integer.compare(film2.getLikedUserIds().size(), film1.getLikedUserIds().size()))
                 .limit(limit)

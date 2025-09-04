@@ -25,7 +25,7 @@ public class GenreService {
     }
 
     public Genre getGenre(Long id) {
-        log.info("Запрошен жанр с id = " + id);
+        log.info("Запрошен жанр с id = {}", id);
         return genreStorage.getGenre(id);
     }
 }

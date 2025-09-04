@@ -2,15 +2,17 @@ package ru.yandex.practicum.filmorate.storage.user;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.dal.mapper.UserMapper;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Friendship;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.Friendship.FriendshipStorage;
+import ru.yandex.practicum.filmorate.storage.friendship.FriendshipStorage;
 
+import java.sql.PreparedStatement;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -44,8 +46,8 @@ public class UserDbStorage implements UserStorage {
                 id
         );
 
-        if (!friendshipStorage.getFriendshipById(user.getId()).isEmpty()) {
-            List<Friendship> friendships = friendshipStorage.getFriendshipById(user.getId());
+        List<Friendship> friendships = friendshipStorage.getFriendshipById(user.getId());
+        if (!friendships.isEmpty()) {
             Set<Long> friendsId = new HashSet<>();
             for (Friendship friendship : friendships) {
                 if (containsUser(friendship.getFriendId())) {
@@ -54,21 +56,27 @@ public class UserDbStorage implements UserStorage {
             }
             user.setFriendsIds(friendsId);
         }
-        log.info("Пользователь с " + id + " успешно возвращен");
+        log.info("Пользователь с id = {} успешно возвращен", id);
         return user;
     }
 
     @Override
     public User createUser(User user) {
         String sqlQuery = "INSERT INTO users (email,login,name,birthday) VALUES (?,?,?,?)";
-        jdbcTemplate.update(sqlQuery,
-                user.getEmail(),
-                user.getLogin(),
-                user.getName(),
-                user.getBirthday()
+
+        KeyHolder kh = new GeneratedKeyHolder();
+
+        jdbcTemplate.update(conn -> {
+                    var ps = conn.prepareStatement(sqlQuery, PreparedStatement.RETURN_GENERATED_KEYS);
+                    ps.setString(1, user.getEmail());
+                    ps.setString(2, user.getLogin());
+                    ps.setString(3, user.getName());
+                    ps.setObject(4, user.getBirthday());
+                    return ps;
+                }, kh
         );
 
-        Long id = jdbcTemplate.queryForObject("SELECT MAX (id) FROM users", Long.class);
+        Long id = kh.getKey().longValue();
 
         user.setId(id);
 
@@ -78,30 +86,25 @@ public class UserDbStorage implements UserStorage {
             }
         }
 
-        log.info("Пользователь с " + id + " успешно создан");
+        log.info("Пользователь с id={} успешно создан", id);
         return getUser(id);
     }
 
     @Override
     public User updateUser(User newUser) {
 
-        try {
-            User oldUser = jdbcTemplate.queryForObject(
-                    "SELECT * FROM users WHERE ID = ?",
-                    new UserMapper(),
-                    newUser.getId()
-            );
-        } catch (EmptyResultDataAccessException exception) {
-            throw new NotFoundException("Пользователь с id=" + newUser.getId() + " не найден");
-        }
-
-        String sqlQuery = "UPDATE users SET email = ?, login = ?, name =?, birthday = ?";
+        String sqlQuery = "UPDATE users SET email = ?, login = ?, name =?, birthday = ? WHERE id = ?";
         int updated = jdbcTemplate.update(sqlQuery,
                 newUser.getEmail(),
                 newUser.getLogin(),
                 newUser.getName(),
-                newUser.getBirthday()
+                newUser.getBirthday(),
+                newUser.getId()
         );
+
+        if (updated == 0) {
+            throw new NotFoundException("Пользователь с id=" + newUser.getId() + " не найден");
+        }
 
 
         jdbcTemplate.update("DELETE FROM friendships WHERE user_id = ?", newUser.getId());
@@ -110,18 +113,18 @@ public class UserDbStorage implements UserStorage {
                 friendshipStorage.createFriendship(new Friendship(newUser.getId(), friendId));
             }
         }
-        log.info("Пользователь с " + newUser.getId() + " успешно обновлен");
+        log.info("Пользователь с id = {} успешно обновлен", newUser.getId());
         return getUser(newUser.getId());
     }
 
     @Override
     public boolean containsUser(Long id) {
-        Integer count = jdbcTemplate.queryForObject(
-                "SELECT COUNT(*) FROM users WHERE id = ?",
-                Integer.class,
+        Boolean exists = jdbcTemplate.queryForObject(
+                "SELECT EXISTS( SELECT 1 FROM users WHERE id = ?)",
+                Boolean.class,
                 id
         );
 
-        return count != 0;
+        return exists;
     }
 }

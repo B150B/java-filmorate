@@ -43,7 +43,7 @@ public class FilmGenreDbStorage implements FilmGenreStorage {
                 filmId,
                 genreId
         );
-        log.info("Фильму id= " + filmId + " добавлен жанр id=" + genreId);
+        log.info("Фильму id={}  добавлен жанр id={}", filmId, genreId);
     }
 
     @Override
@@ -53,6 +53,6 @@ public class FilmGenreDbStorage implements FilmGenreStorage {
                 filmId,
                 genreId
         );
-        log.info("У фильма id= " + filmId + " убран жанр id=" + genreId);
+        log.info("У фильма id={} убран жанр id={}", filmId, genreId);
     }
 }

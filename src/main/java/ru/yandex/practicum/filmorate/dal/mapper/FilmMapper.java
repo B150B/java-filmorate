@@ -18,8 +18,8 @@ public class FilmMapper implements RowMapper<Film> {
                 rs.getInt("duration")
         );
 
-        Long mpaId = rs.getLong("mpa_id");
-        if (mpaId != null && mpaId != 0) {
+        long mpaId = rs.getLong("mpa_id");
+        if (mpaId != 0) {
             film.setMpaRating(new MpaRating(mpaId, null));
         }
         film.setId(rs.getLong("id"));

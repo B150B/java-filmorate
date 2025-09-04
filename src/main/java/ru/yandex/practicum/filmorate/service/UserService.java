@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Friendship;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.Friendship.FriendshipStorage;
+import ru.yandex.practicum.filmorate.storage.friendship.FriendshipStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.List;
@@ -98,7 +98,7 @@ public class UserService {
         user1FriendsIds.retainAll(user2FriendsIds);
 
         return user1FriendsIds.stream()
-                .map(friendId -> userStorage.getUser(friendId))
+                .map(userStorage::getUser)
                 .collect(Collectors.toList());
     }
 

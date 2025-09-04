@@ -31,7 +31,7 @@ public class MpaRatingDbStorage implements MpaRatingStorage {
     @Override
     public MpaRating getMpaRating(Long id) {
         try {
-            log.info("Запрошен MpaRating с id=" + id);
+            log.info("Запрошен MpaRating с id={}", id);
             return jdbcTemplate.queryForObject(
                     "SELECT id,name FROM mpa_ratings WHERE id = ?",
                     new MpaRatingMapper(),

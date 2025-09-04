@@ -32,7 +32,7 @@ public class FilmLikeDbStorage implements FilmLikeStorage {
                 filmId,
                 userId
         );
-        log.info("Пользователь  id=" + userId + " поставил лайк фильму id=" + filmId);
+        log.info("Пользователь  id={} поставил лайк фильму id={}", userId, filmId);
     }
 
     @Override
@@ -42,6 +42,6 @@ public class FilmLikeDbStorage implements FilmLikeStorage {
                 filmId,
                 userId
         );
-        log.info("Пользователь id = " + userId + "удалил лайк у фильма id = " + filmId);
+        log.info("Пользователь id = {} удалил лайк у фильма id = {}", userId, filmId);
     }
 }

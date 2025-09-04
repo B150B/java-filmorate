@@ -23,7 +23,7 @@ public class MpaRatingService {
     }
 
     public MpaRating getMpaRating(Long id) {
-        log.info("Запрошен mpaRating с id = " + id);
+        log.info("Запрошен mpaRating с id = {}", id);
         return mpaRatingStorage.getMpaRating(id);
     }
 }

@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.dal.mapper.FilmMapper;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
@@ -15,6 +17,8 @@ import ru.yandex.practicum.filmorate.storage.filmLike.FilmLikeDbStorage;
 import ru.yandex.practicum.filmorate.storage.genre.GenreDbStorage;
 import ru.yandex.practicum.filmorate.storage.mpaRating.MpaRatingStorage;
 
+import java.sql.PreparedStatement;
+import java.sql.Types;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -57,7 +61,7 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film getFilm(Long id) {
-        log.info("Запрошен фильм с id=" + id);
+        log.info("Запрошен фильм с id={}", id);
         Film film;
 
         try {
@@ -102,16 +106,26 @@ public class FilmDbStorage implements FilmStorage {
             }
         }
 
+        KeyHolder kh = new GeneratedKeyHolder();
 
-        jdbcTemplate.update(sqlQuery,
-                film.getName(),
-                film.getDescription(),
-                film.getReleaseDate(),
-                film.getDuration(),
-                mpaId
+        Long finalMpaId = mpaId;
+
+        jdbcTemplate.update(conn -> {
+                    var ps = conn.prepareStatement(sqlQuery, PreparedStatement.RETURN_GENERATED_KEYS);
+                    ps.setString(1, film.getName());
+                    ps.setString(2, film.getDescription());
+                    ps.setObject(3, film.getReleaseDate());
+                    ps.setInt(4, film.getDuration());
+                    if (finalMpaId != null) {
+                        ps.setLong(5, finalMpaId);
+                    } else {
+                        ps.setNull(5, Types.BIGINT);
+                    }
+                    return ps;
+                }, kh
         );
 
-        Long id = jdbcTemplate.queryForObject("SELECT MAX (id) FROM films", Long.class);
+        Long id = kh.getKey().longValue();
 
         film.setId(id);
 
@@ -133,7 +147,7 @@ public class FilmDbStorage implements FilmStorage {
             }
         }
 
-        log.info("Фильм с id=" + id + " успешно создан");
+        log.info("Фильм с id={} успешно создан", id);
         return getFilm(id);
 
     }
@@ -174,7 +188,7 @@ public class FilmDbStorage implements FilmStorage {
             }
         }
 
-        log.info("Фильму id= " + newFilm.getId() + " успешно обновлен");
+        log.info("Фильм id={} успешно обновлен", newFilm.getId());
         return getFilm(newFilm.getId());
     }
 }
