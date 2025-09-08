@@ -6,7 +6,14 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class Friendship {
+    private Long id;
     private Long userId;
     private Long friendId;
     private boolean friendshipConfirmed;
+
+    public Friendship(Long userId, Long friendId) {
+        this.userId = userId;
+        this.friendId = friendId;
+        this.friendshipConfirmed = false;
+    }
 }

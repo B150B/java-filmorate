@@ -4,8 +4,10 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
+import ru.yandex.practicum.filmorate.validators.ValidBirthDay;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -18,8 +20,9 @@ public class User {
     @Pattern(regexp = "\\S+", message = "Поле не должно содержать пробелов")
     private String login;
     private String name;
+    @ValidBirthDay
     private LocalDate birthday;
-    private Set<Friendship> friendships;
+    private Set<Long> friendsIds;
 
     public User(String email, String login, String name, LocalDate birthday) {
         this.email = email;
@@ -30,5 +33,8 @@ public class User {
             this.name = name;
         }
         this.birthday = birthday;
+        this.friendsIds = new HashSet<>();
     }
+
+
 }
